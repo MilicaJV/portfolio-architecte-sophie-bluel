@@ -17,7 +17,7 @@ toggleAdminElements();
 const logout = document.querySelector(".logout");
 logout.addEventListener("click", function () {
     localStorage.removeItem("token");
-    window.location.href = "/index.html";
+    window.location.href = "index.html";
 });
 
 const openModal = document.querySelector(".openModal");
