@@ -21,7 +21,7 @@ form.addEventListener("submit", async function (event) {
         .then(data => {
             console.log('Success:', data);
             window.localStorage.setItem("token", data.token);
-            window.location.href = "/index.html";
+            window.location.href = "index.html";
         })
         .catch(error => {
             console.error("Erreur attrapée : ", error);
