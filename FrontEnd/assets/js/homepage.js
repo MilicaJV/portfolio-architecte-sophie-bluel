@@ -1,13 +1,21 @@
+let projectsApi = getProjects();
+let categoriesApi = getCategories();
+
+
 async function getProjects() {
-    const projects = await fetch("http://localhost:5678/api/works");
-    const projectsJson = await projects.json();
-    console.log(projectsJson);
-    return projectsJson
-}
+    try {
+        const projects = await fetch("http://localhost:5678/api/works");
+        return await projects.json();
+    } catch (error) {
+        console.error("Erreur lors de la récuperation des projets :", error);
+        return [];
+    }
+};
+getProjects();
 
 
 async function displayProjects() {
-    const projects = await getProjects();
+    const projects = await projectsApi;
     const projectsContent = document.querySelector("#portfolio .gallery");
     projectsContent.innerHTML = "";
     for (let project of projects) {
@@ -30,23 +38,21 @@ async function displayProjects() {
 displayProjects();
 
 async function getCategories() {
-    const categories = await fetch("http://localhost:5678/api/categories");
-    const categoriesJson = await categories.json();
-    return categoriesJson;
-}
-
-function removeDuplicates(data) {
-    data = [...new Set(data)];
-    let allCat = { id: 0, name: "Tous" };
-    data.unshift(allCat);
-    return data;
-
+    try {
+        const categories = await fetch("http://localhost:5678/api/categories");
+        return await categories.json();
+    } catch (error) {
+        console.error("Erreur lors de la récuperation des catégories :", error);
+        return [];
+    }
 }
 
 async function displayCategories() {
-    let categories = await getCategories();
-    categories = removeDuplicates(categories);
-    categories.forEach(cat => {
+    const categories = await categoriesApi;
+    let listCat = [...new Set(categories)];
+    let allCat = { id: 0, name: "Tous" };
+    listCat.unshift(allCat);
+    listCat.forEach(cat => {
         const btn = document.createElement("button");
         btn.textContent = cat["name"];
         btn.dataset.filter = cat["id"];
@@ -83,10 +89,10 @@ async function filterCategories() {
 
 
 async function displayProjectsInModal() {
-    const projects = await getProjects();
+    const proj = await projectsApi;
     const divImages = document.querySelector(".images");
     divImages.innerHTML = "";
-    projects.forEach((project) => {
+    proj.forEach((project) => {
         const tagFigure = document.createElement("figure");
         tagFigure.dataset.id = project["id"];
         const tagImg = document.createElement("img");
@@ -121,8 +127,7 @@ async function removeProject(id) {
             }
         });
         if (response.ok) {
-            displayProjects();
-            displayProjectsInModal()
+            document.querySelector(`figure[data-id="${id}"]`)?.remove();
         } else {
             alert("Erreur lors de la suppression !");
         }
