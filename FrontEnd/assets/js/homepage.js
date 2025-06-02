@@ -127,7 +127,7 @@ async function removeProject(id) {
             }
         });
         if (response.ok) {
-            document.querySelector(`figure[data-id="${id}"]`)?.remove();
+            document.querySelectorAll(`figure[data-id="${id}"]`)?.forEach(el => el.remove());
         } else {
             alert("Erreur lors de la suppression !");
         }
