@@ -19,7 +19,6 @@ form.addEventListener("submit", async function (event) {
         })
 
         .then(data => {
-            console.log('Success:', data);
             window.localStorage.setItem("token", data.token);
             window.location.href = "index.html";
         })
