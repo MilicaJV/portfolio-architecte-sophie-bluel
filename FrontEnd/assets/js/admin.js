@@ -40,20 +40,20 @@ function closeModals() {
         button.addEventListener("click", (e) => {
             const modalToClose = button.closest(".modal");
             if (modalToClose) {
-                modalToClose.style.display = "none";
+                modalToClose.classList.add("hidden");
             }
         });
     });
     document.querySelectorAll(".modal").forEach(modal => {
         modal.addEventListener("click", (event) => {
             if (event.target === modal) {
-                modal.style.display = "none";
+                modal.classList.add("hidden");
             }
         });
     });
     document.getElementById("arrowBack").addEventListener("click", (e) => {
         secondModal.classList.add("hidden");
-        modal.modal.style.display = "none";
+        modal.classList.remove("hidden");
     })
 }
 closeModals();
@@ -130,8 +130,9 @@ function addNewProject() {
                 }
             });
             if (response.ok) {
-                displayProjects()
-                displayProjectsInModal()
+                const newProject = await response.json();
+                createProject(newProject.id, newProject.imageUrl, newProject.title, newProject.categoryId);
+                createProjectInModal(newProject.id, newProject.imageUrl, newProject.title);
                 form.reset();
                 document.getElementById("imgPreview").src = "";
                 document.querySelector(".icon-preview").classList.remove("hidden");
@@ -148,3 +149,44 @@ function addNewProject() {
     });
 };
 addNewProject();
+
+function createProjectInModal(id, imageUrl, title) {
+    const divImages = document.querySelector(".images");
+    const tagFigure = document.createElement("figure");
+    tagFigure.dataset.id = id;
+    const tagImg = document.createElement("img");
+    const trash = document.createElement("span");
+    trash.classList.add("trash-icon");
+    trash.dataset.id = id;
+    const trashIcon = document.createElement("i");
+    trashIcon.classList.add("fa-solid", "fa-trash-can");
+    trash.appendChild(trashIcon);
+    tagFigure.appendChild(trash);
+    tagImg.setAttribute("src", imageUrl);
+    tagImg.setAttribute("alt", title);
+    tagImg.style.height = "102px";
+    tagImg.style.objectFit = "cover";
+    tagFigure.appendChild(tagImg);
+    divImages.appendChild(tagFigure);
+    trash.addEventListener("click", async function (event) {
+        removeProject(project["id"])
+    });
+};
+
+
+function createProject(id, imageUrl, title, categoryId) {
+    const projectsContent = document.querySelector("#portfolio .gallery");
+    const figureElement = document.createElement("figure");
+    figureElement.classList.add("photo");
+    figureElement.dataset.category = categoryId;
+    figureElement.dataset.id = id;
+    const imgElement = document.createElement("img");
+    imgElement.setAttribute("src", imageUrl);
+    imgElement.setAttribute("alt", title);
+    const figcaptionElement = document.createElement("figcaption");
+    const text = document.createTextNode(title);
+    figcaptionElement.appendChild(text);
+    figureElement.appendChild(imgElement);
+    figureElement.appendChild(figcaptionElement);
+    projectsContent.appendChild(figureElement);
+};
